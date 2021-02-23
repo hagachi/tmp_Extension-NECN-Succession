@@ -29,6 +29,7 @@ namespace Landis.Extension.Succession.NECN
             ISiteCohorts siteCohorts = SiteVars.Cohorts[site];
             IEcoregion ecoregion = PlugIn.ModelCore.Ecoregion[site];
 
+
             for (int y = 0; y < years; ++y) {
 
                 Year = y + 1;
@@ -67,6 +68,7 @@ namespace Landis.Extension.Succession.NECN
                     SiteVars.MonthlyStreamN[site][Month] = 0.0;
                     SiteVars.MonthlyLAI[site][Month] = 0.0;
                     SiteVars.MonthlyLAI_Trees[site][Month] = 0.0;
+                    SiteVars.MonthlyLAI_Grasses[site][Month] = 0.0;
                     SiteVars.MonthlySoilWaterContent[site][Month] = 0.0;
                     SiteVars.SourceSink[site].Carbon = 0.0;
                     SiteVars.TotalWoodBiomass[site] = Main.ComputeWoodBiomass((ActiveSite) site);
@@ -106,6 +108,11 @@ namespace Landis.Extension.Succession.NECN
                         siteCohorts.Grow(site, (y == years && isSuccessionTimeStep), true);
                     else
                         siteCohorts.Grow(site, (y == years && isSuccessionTimeStep), false);
+
+                    // Track LAI of grass species
+                    // Chihiro 2021.02.23
+                    SiteVars.MonthlyLAI_Grasses_LastMonth[site] = SiteVars.MonthlyLAI_Grasses[site][Month];
+                    //PlugIn.ModelCore.UI.WriteLine("Month={0:0.00},  LAIgrass={1:0.00}, LAIgrassLastmonth={2:0.00}", Month, SiteVars.MonthlyLAI_Grasses[site][Month], SiteVars.MonthlyLAI_Grasses_LastMonth[site]);
 
                     WoodLayer.Decompose(site);
                     LitterLayer.Decompose(site);
