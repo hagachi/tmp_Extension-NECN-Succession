@@ -228,7 +228,8 @@ namespace Landis.Extension.Succession.NECN
             if (PlugIn.ModelCore.CurrentTime > 0 && OtherData.CalibrateMode)
             {
                 //Outputs.CalibrateLog.Write("{0:0.00},{1:0.00},{2:0.00},{3:0.00}, {4:0.00},", limitLAI, limitH20, limitT, limitCapacity, limitN);
-                Outputs.CalibrateLog.Write("{0:0.00},{1:0.00},{2:0.00},{3:0.00},", limitLAI, limitH20, limitT, limitN);
+                Outputs.CalibrateLog.Write("{0:0.00},{1:0.00},{2:0.00},{3:0.00},{4:0.00},", limitLAI, limitH20, limitT, limitN, competition_limit); // modified by Chihiro 2021.02.23
+                Outputs.CalibrateLog.Write("{0:0.00},{1:0.00},", SiteVars.MonthlyLAI[site][Main.Month], SiteVars.MonthlyLAI_Trees[site][Main.Month]); // Track total site LAI and total site LAI_trees Chihiro 2021.02.23
                 Outputs.CalibrateLog.Write("{0},{1},{2},{3:0.0},{4:0.0},", maxNPP, maxBiomass, (int)siteBiomass, (cohort.WoodBiomass + cohort.LeafBiomass), SiteVars.SoilTemperature[site]);
                 Outputs.CalibrateLog.Write("{0:0.00},{1:0.00},", woodNPP, leafNPP);
             }
@@ -585,6 +586,10 @@ namespace Landis.Extension.Succession.NECN
                 SiteVars.LAI[site] += lai; //Tracking LAI.
 
             SiteVars.MonthlyLAI[site][Main.Month] += lai;
+            // Chihiro 2021.02.23
+            // Tracking Tree species LAI above grasses
+            if (!SpeciesData.Grass[cohort.Species])
+                SiteVars.MonthlyLAI_Trees[site][Main.Month] += lai;
 
             if (PlugIn.ModelCore.CurrentTime > 0 && OtherData.CalibrateMode)
 
@@ -612,7 +617,7 @@ namespace Landis.Extension.Succession.NECN
             //   grassThresholdMultiplier: User defined parameter to adjust relationships between AGB and Hight of the cohort
             //   default = 1.0
             //
-            //   if biomass_of_tree_cohort > total_grass_biomass_on_the_site * threshold_multiplier:
+            //   if (the cohort is tree species) and (biomass_of_tree_cohort > total_grass_biomass_on_the_site * threshold_multiplier):
             //     monthly_cummulative_LAI = Monthly_LAI_of_tree_species
             //   else:
             //     monthly_cummulative_LAI = Monthly_LAI_of_tree_& grass_species
@@ -622,7 +627,7 @@ namespace Landis.Extension.Succession.NECN
             // PlugIn.ModelCore.UI.WriteLine("TreeLAI={0},TreeLAI={0}", SiteVars.MonthlyLAITree[site][Main.Month], SiteVars.MonthlyLAI[site][Main.Month]); // added (W.Hotta 2020.07.07)
             // PlugIn.ModelCore.UI.WriteLine("Spp={0},Time={1},Mo={2},cohortBiomass={3},grassBiomass={4},LAI={5}", cohort.Species.Name, PlugIn.ModelCore.CurrentTime, Main.Month + 1, cohort.Biomass, Main.ComputeGrassBiomass(site), monthly_cumulative_LAI); // added (W.Hotta 2020.07.07)
 
-            if (SpeciesData.Grass[cohort.Species] &&
+            if (!SpeciesData.Grass[cohort.Species] &&
                 cohort.Biomass > ComputeGrassBiomass(site) * grassThresholdMultiplier)
             {
                 monthly_cumulative_LAI = SiteVars.MonthlyLAI_Trees[site][Main.Month];

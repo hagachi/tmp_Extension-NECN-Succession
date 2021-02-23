@@ -492,7 +492,8 @@ namespace Landis.Extension.Succession.NECN
             CalibrateLog.Write("mineralNalloc, resorbedNalloc, ");  // from calculateN_Limit
 
             // These three together:
-            CalibrateLog.Write("limitLAI, limitH20, limitT, limitN, ");  //from ComputeActualANPP
+            CalibrateLog.Write("limitLAI, limitH20, limitT, limitN, limitCompetition, ");  //from ComputeActualANPP, modified by Chihiro 2021.02.23
+            CalibrateLog.Write("SiteLAItotal, SiteLAItrees,");  // from calculateLAI_limit, Chihiro 2021.02.23
             CalibrateLog.Write("maxNPP, Bmax, Bsite, Bcohort, soilTemp, ");  //from ComputeActualANPP
             CalibrateLog.Write("actualWoodNPP, actualLeafNPP, ");  //from ComputeActualANPP
 
